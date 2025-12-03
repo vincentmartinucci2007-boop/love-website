@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Our Love & Memories 💖</title>
+
+<style>
+  body{
+    margin:0;
+    background:linear-gradient(180deg,#fff0f7,#ffe4ee);
+    font-family:"Georgia","Inter",serif;
+    text-align:center;
+    padding:30px;
+    color:#86355c;
+    overflow-x:hidden;
+  }
+  h1{
+    font-size:34px;
+    margin-bottom:10px;
+    color:#b7377d;
+  }
+  .welcome{
+    font-size:18px;
+    background:#ffffffdd;
+    padding:16px;
+    border-radius:20px;
+    max-width:700px;
+    margin:0 auto 20px;
+    border:1px solid #ffc6dd;
+  }
+  .section{
+    background:#ffffffcc;
+    padding:20px;
+    border-radius:20px;
+    max-width:700px;
+    margin:20px auto;
+    border:1px solid #ffd6e8;
+    box-shadow:0 4px 12px rgba(255,170,200,0.3);
+  }
+  button{
+    background:#d84d8b;
+    border:none;
+    padding:10px 20px;
+    border-radius:20px;
+    color:white;
+    font-weight:bold;
+    margin:8px;
+    cursor:pointer;
+  }
+  button:hover{background:#c03c79}
+
+  input,textarea{
+    width:90%;
+    padding:10px;
+    border-radius:12px;
+    border:1px solid #f6bcd4;
+    margin-top:8px;
+  }
+  img{
+    border-radius:14px;
+    width:120px;
+    height:120px;
+    object-fit:cover;
+    box-shadow:0 4px 10px rgba(0,0,0,0.1);
+  }
+  .memory-box,.reason,.secret{
+    background:#ffe6f1;
+    border:1px solid #ffbfdc;
+    border-radius:16px;
+    padding:12px;
+    margin:10px auto;
+    max-width:600px;
+  }
+
+  /* Secret message reveal */
+  #secretMessage {
+    display:none;
+    animation: popIn 0.5s ease-out forwards;
+  }
+  @keyframes popIn {
+    0% { transform: scale(0.8); opacity:0; }
+    100% { transform: scale(1); opacity:1; }
+  }
+
+  /* Floating hearts */
+  .heart {
+    position: fixed;
+    bottom: -20px;
+    font-size: 24px;
+    animation: floatUp 6s linear infinite;
+    opacity: 0.8;
+    user-select:none;
+    pointer-events:none;
+  }
+  @keyframes floatUp {
+    0% { transform: translateY(0); opacity:1; }
+    100% { transform: translateY(-120vh); opacity:0; }
+  }
+</style>
+</head>
+
+<body>
+
+<h1>💖 Our Memories 💖</h1>
+
+<div class="welcome">
+  Thank you for being the love of my life and I’m so lucky to have you 💕
+</div>
+
+<!-- Photos Section -->
+<div class="section">
+  <h2>📸 Our Photos</h2>
+  <input id="photoInput" type="file" accept="image/*" multiple>
+  <div id="thumbs"></div>
+</div>
+
+<!-- Memories Section -->
+<div class="section">
+  <h2>📝 Special Moments</h2>
+  <input id="memTitle" placeholder="Title (e.g. 'First date')">
+  <textarea id="memText" rows="3" placeholder="Write a sweet memory…"></textarea>
+  <button onclick="addMemory()">Add</button>
+  <div id="memories"></div>
+</div>
+
+<!-- Reasons Section -->
+<div class="section">
+  <h2>🌟 Reasons I Like You</h2>
+  <textarea id="reasonText" rows="2" placeholder="Write a reason…"></textarea>
+  <button onclick="addReason()">Add</button>
+  <div id="reasons"></div>
+</div>
+
+<!-- Secret Surprise Section -->
+<div class="section">
+  <h2>🎁 Secret Surprise</h2>
+  <button onclick="revealSecret()">Tap for a Surprise 💗</button>
+  <div id="secretMessage" class="secret">
+    Ever since u came into my life I think I became a better version of myself. 
+    You always make me very happy 💖
+  </div>
+</div>
+
+<!-- Song Section -->
+<div class="section">
+  <h2>🎶 Our Song</h2>
+  <input id="audioInput" type="file" accept="audio/*">
+  <div id="audioBox"></div>
+</div>
+
+<script>
+let photos=[]; 
+let memories=[]; 
+let reasons=[];
+
+// Photos
+photoInput.onchange=e=>{
+  for(const f of e.target.files){
+    const r=new FileReader();
+    r.onload=()=>{ photos.push(r.result); showPhotos(); };
+    r.readAsDataURL(f);
+  }
+};
+function showPhotos(){
+  thumbs.innerHTML='';
+  photos.forEach(p=>{
+    const img=document.createElement('img');
+    img.src=p;
+    thumbs.appendChild(img);
+  });
+}
+
+// Memories
+function addMemory(){
+  const t=memTitle.value.trim();
+  const tx=memText.value.trim();
+  if(!t && !tx) return;
+  memories.push({t,tx});
+  render();
+  memTitle.value=''; memText.value='';
+}
+function render(){
+  memories.innerHTML='';
+  memories.forEach(m=>{
+    memories.innerHTML+=
+    `<div class="memory-box"><h3>${m.t}</h3><p>${m.tx}</p></div>`;
+  });
+}
+
+// Reasons
+function addReason(){
+  const tx=reasonText.value.trim();
+  if(!tx) return;
+  reasons.push(tx);
+  reasonText.value='';
+  renderReasons();
+}
+function renderReasons(){
+  reasons.innerHTML='';
+  reasons.forEach(r=>{
+    reasons.innerHTML+=`<div class="reason">💗 ${r}</div>`;
+  });
+}
+
+// Song
+audioInput.onchange=e=>{
+  const f=e.target.files[0]; if(!f) return;
+  const r=new FileReader();
+  r.onload=()=>{ audioBox.innerHTML='<audio controls src="'+r.result+'"></audio>'; };
+  r.readAsDataURL(f);
+};
+
+// Reveal Secret
+function revealSecret(){
+  const s=document.getElementById('secretMessage');
+  s.style.display="block";
+}
+
+// Floating hearts
+function createHeart(){
+  const heart=document.createElement('div');
+  heart.className='heart';
+  heart.innerText='💖';
+  heart.style.left=Math.random()*100+'vw';
+  heart.style.animationDuration=(4+Math.random()*4)+'s';
+  document.body.appendChild(heart);
+  setTimeout(()=>heart.remove(),6000);
+}
+setInterval(createHeart,800);
+</script>
+
+</body>
+</html>
